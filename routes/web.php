@@ -7,13 +7,11 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
-use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('login');
 });
 
-Route::get('dashboard', [DashboardController::class,'index']);
 
 Route::resource('barang', BarangController::class)->middleware('auth');
 
@@ -24,7 +22,7 @@ Route::resource('barangmasuk', BarangMasukController::class)->middleware('auth')
 Route::resource('barangkeluar', BarangKeluarController::class)->middleware('auth');
 
 Route::get('login', [LoginController::class,'index'])->name('login')->middleware('guest');
-Route::post('login', [LoginController::class,'authenticate']);
+// Route::post('login', [LoginController::class,'authenticate']);
 
 Route::post('logout', [LoginController::class,'logout']);
 Route::get('logout', [LoginController::class,'logout']);

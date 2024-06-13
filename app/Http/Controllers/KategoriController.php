@@ -60,7 +60,7 @@ public function index(Request $request)
         //echo "data deskripsi";
         //echo $request->deskripsi;
         //die('asd');
-
+        dd($request);
 
         $request->validate([
             'deskripsi' => 'required',
