@@ -16,7 +16,7 @@ class BarangMasukController extends Controller
         $keyword = $request->input('keyword');
     
         // Query untuk mencari barang masuk berdasarkan keyword
-        $rsetBarangMasuk = BarangMasuk::with('barang')
+        $rsetBarang = BarangMasuk::with('barang')
             ->whereHas('barang', function ($query) use ($keyword) {
                 $query->where('merk', 'LIKE', "%$keyword%")
                       ->orWhere('seri', 'LIKE', "%$keyword%")
@@ -26,10 +26,9 @@ class BarangMasukController extends Controller
             ->orWhere('qty_masuk', 'LIKE', "%$keyword%")
             ->paginate(10);
     
-        return view('barangmasuk.index', compact('rsetBarangMasuk'))
+        return view('barangmasuk.index', compact('rsetBarang'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -41,6 +40,9 @@ class BarangMasukController extends Controller
         return view('barangmasuk.create', compact('abarang', 'today'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         //return $request;
@@ -95,19 +97,18 @@ class BarangMasukController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate( [
-            'tgl_masuk'          => 'required',
-            'qty_masuk'          => 'required',
-            'barang_id'          => 'required',
-
+            'tgl_masuk'        => 'required',
+            'qty_masuk'        => 'required',
+            'barang_id' => 'required',
         ]);
 
         $rsetBarang = BarangMasuk::find($id);
 
             //update post without image
             $rsetBarang->update([
-                'tgl_masuk'             => $request->tgl_masuk,
-                'qty_masuk'             => $request->qty_masuk,
-                'barang_id'             => $request->barang_id,
+                'tgl_masuk'          => $request->tgl_masuk,
+                'qty_masuk'          => $request->qty_masuk,
+                'barang_id'          => $request->barang_id,
             ]);
 
         // Redirect to the index page with a success message
@@ -115,22 +116,17 @@ class BarangMasukController extends Controller
     }
 
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(string $id)
     {
-        $datamasuk = BarangMasuk::find($id);
-        
-        // Memeriksa apakah ada record di tabel BarangKeluar dengan barang_id yang sama
-        $referencedInBarangKeluar = BarangKeluar::where('barang_id', $datamasuk->barang_id)->exists();
+        $rsetBarang = BarangMasuk::find($id);
 
-        if ($referencedInBarangKeluar) {
-        // Jika ada referensi, penghapusan ditolak
-        return redirect()->route('barangmasuk.index')->with(['error' => 'Data Tidak Bisa Dihapus Karena Masih Digunakan di Tabel Barang Keluar!']);
-        }
+        //delete post
+        $rsetBarang->delete();
 
-        // Menghapus record di tabel BarangMasuk
-        $datamasuk->delete();
-
-        // Redirect ke index dengan pesan sukses
+        //redirect to index
         return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
 }

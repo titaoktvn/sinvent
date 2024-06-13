@@ -13,24 +13,24 @@ class BarangController extends Controller
     public function index(Request $request)
     {
         //$rsetBarang = Barang::with('kategori')->latest()->paginate(10);
-
- 	if ($request->search){
+        
+        if ($request->search){
             //query builder
             $rsetBarang = DB::table('barang')->select('kategori')
-					->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
-						->select('barang.id','barang.merk','barang.seri','barang.spesifikasi','barang.stok','barang.kategori_id',DB::raw('getKategori(kategori.kategori) as kat'))
-                                                 ->where('barang.id','like','%'.$request->search.'%')
-                                                 ->orWhere('barang.merk','like','%'.$request->search.'%')
-               		                    ->paginate(10);
-           
+                                            ->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
+                                            ->select('barang.id','barang.merk','barang.seri','barang.spesifikasi','barang.stok','barang.kategori_id',DB::raw('ketKategori(kategori.kategori) as kat'))
+                                            ->where('barang.id','like','%'.$request->search.'%')
+                                            ->orWhere('barang.merk','like','%'.$request->search.'%')
+                                            ->paginate(10);
+                                        
         }else {
             $rsetBarang = DB::table('barang')->select('kategori')
-             ->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
-                ->select('barang.id','barang.merk','barang.seri','barang.spesifikasi','barang.stok','barang.kategori_id',DB::raw('getKategori(kategori.kategori) as kat'))
-                                        ->paginate(10);
+                                            ->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
+                                            ->select('barang.id','barang.merk','barang.seri','barang.spesifikasi','barang.stok','barang.kategori_id',DB::raw('ketKategori(kategori.kategori) as kat'))
+                                            ->paginate(10);
         }
-    
-//return $rsetBarang;
+        
+        //return $rsetBarang;
 
         return view('barang.index', compact('rsetBarang'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
@@ -73,27 +73,27 @@ class BarangController extends Controller
 
         try {
             DB::beginTransaction(); // <= Mulai transaksi
-          // Simpan data barang
-          $barang = new Barang();
-          $barang->merk = $request->merk;
-          $barang->seri = $request->seri;
-          $barang->spesifikasi = $request->spesifikasi;
-          $barang->stok = $request->stok;
-          $barang->kategori_id = $request->kategori_id;
-          $barang->save();
-      
-          DB::commit(); // <= Commit perubahan
-      } catch (\Exception $e) {
-          report($e);
-      
-          DB::rollBack(); // <= Rollback jika terjadi kesalahan
-          // return redirect()->route('barang.index')->with(['error' => 'gagal menyimpan data.']);
-      }
+        
+            // Simpan data barang
+            $barang = new Barang();
+            $barang->merk = $request->merk;
+            $barang->seri = $request->seri;
+            $barang->spesifikasi = $request->spesifikasi;
+            $barang->stok = 0;
+            $barang->kategori_id = $request->kategori_id;
+            $barang->save();
+        
+            DB::commit(); // <= Commit perubahan
+        } catch (\Exception $e) {
+            report($e);
+        
+            DB::rollBack(); // <= Rollback jika terjadi kesalahan
+            // return redirect()->route('barang.index')->with(['error' => 'gagal menyimpan data.']);
+        }
 
-      //redirect to index
-      return redirect()->route('barang.index')->with(['success' => 'Data Berhasil Disimpan!']);
-  }
-
+        //redirect to index
+        return redirect()->route('barang.index')->with(['success' => 'Data Berhasil Disimpan!']);
+    }
 
     /**
      * Display the specified resource.
@@ -156,9 +156,9 @@ class BarangController extends Controller
     public function destroy(string $id)
     {
         if (DB::table('barangmasuk')->where('barang_id', $id)->exists()) {
-        return redirect()->route('barang.index')->with(['gagal' => 'gagal dihapus']);
+        return redirect()->route('barang.index')->with(['gagal' => 'Gagal dihapus']);
     } elseif (DB::table('barangkeluar')->where('barang_id', $id)->exists()) {
-        return redirect()->route('barang.index')->with(['gagal' => 'gagal dihapus']);
+        return redirect()->route('barang.index')->with(['gagal' => 'Gagal dihapus']);
     } else {
         $rsetBarang = Barang::find($id);
         $rsetBarang->delete();
@@ -166,7 +166,7 @@ class BarangController extends Controller
     }
 }
 
-// API
+    // API
     // [invent-01] Semua Barang
     function getAPIBarang(){
         $barang = Barang::all();

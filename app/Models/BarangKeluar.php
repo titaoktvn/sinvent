@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\BarangKeluar;
+use App\Models\Barang;
 
 class BarangKeluar extends Model
 {

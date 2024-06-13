@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('barang', function (Blueprint $table) {
             $table->id();
-            $table->string('merk',50)->nullable();
-            $table->string('seri',50)->nullable();
+            $table->string('merk',30)->nullable();
+            $table->string('seri',40)->nullable();
             $table->text('spesifikasi')->nullable();
             $table->smallInteger('stok')->default(0);
             $table->foreignId('kategori_id')->nullable();
