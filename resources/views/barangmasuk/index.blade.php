@@ -66,7 +66,7 @@
                     @php
                         $i = 0;
                         @endphp
-                    @forelse ($rsetBarangMasuk as $rowbarang)
+                    @forelse ($rsetBarang as $rowbarang)
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $rowbarang->tgl_masuk  }}</td>
@@ -91,7 +91,7 @@
                     </tbody>
                    
                 </table>
-                {!! $rsetBarangMasuk->links('pagination::bootstrap-5') !!}
+                {!! $rsetBarang->links('pagination::bootstrap-5') !!}
 
             </div>
         </div>

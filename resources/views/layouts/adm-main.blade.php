@@ -273,7 +273,7 @@
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="{!! asset('theme/img/tita.jpg') !!}"
+                                        <img class="rounded-circle" src="{!! asset('theme/img/Naruto.png') !!}"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>

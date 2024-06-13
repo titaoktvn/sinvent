@@ -8,6 +8,7 @@ use App\Models\Kategori;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class BarangMasukController extends Controller
 {
@@ -37,6 +38,7 @@ class BarangMasukController extends Controller
     {
         $abarang = Barang::all(); // Mengambil data barang
         $today = date('Y-m-d'); // Mendapatkan tanggal hari ini dalam format YYYY-MM-DD
+
         return view('barangmasuk.create', compact('abarang', 'today'));
     }
 
@@ -47,23 +49,66 @@ class BarangMasukController extends Controller
     {
         //return $request;
         //validate form
-        $request->validate( [
+        $request->validate([
             'tgl_masuk'          => 'required',
             'qty_masuk'          => 'required',
-            'barang_id'          => 'required',
+            'barang_id'   => 'required',
 
         ]);
 
         //create post
-        BarangMasuk::create([
-            'tgl_masuk'             => $request->tgl_masuk,
-            'qty_masuk'             => $request->qty_masuk,
-            'barang_id'             => $request->barang_id,
-        ]);
+        //BarangMasuk::create([
+            //'tgl_masuk'             => $request->tgl_masuk,
+            //'qty_masuk'             => $request->qty_masuk,
+            //'barang_id'      => $request->barang_id,
+        //]);
 
-        //redirect to index
-        return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Disimpan!']);
+	try {
+            DB::beginTransaction(); // Mulai transaksi
+
+            // Create BarangMasuk record
+            $barangMasuk = BarangMasuk::create([
+                'tgl_masuk' => $request->tgl_masuk,
+                'qty_masuk' => $request->qty_masuk,
+                'barang_id' => $request->barang_id,
+            ]);
+
+
+            DB::commit(); // Commit perubahan
+
+            // Redirect to index
+            return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback jika terjadi kesalahan
+            return redirect()->route('barangmasuk.index')->with(['error' => 'Gagal menyimpan data.']);
+        }
     }
+
+
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
+    // public function store(Request $request)
+    // {
+    //     //return $request;
+    //     //validate form
+    //     $request->validate( [
+    //         'tgl_masuk'          => 'required',
+    //         'qty_masuk'          => 'required',
+    //         'barang_id'          => 'required',
+
+    //     ]);
+
+    //     //create post
+    //     BarangMasuk::create([
+    //         'tgl_masuk'             => $request->tgl_masuk,
+    //         'qty_masuk'             => $request->qty_masuk,
+    //         'barang_id'             => $request->barang_id,
+    //     ]);
+
+    //     //redirect to index
+    //     return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Disimpan!']);
+    // }
 
     /**
      * Display the specified resource.

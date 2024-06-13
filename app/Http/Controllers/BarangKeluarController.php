@@ -8,6 +8,7 @@ use App\Models\Kategori;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class BarangKeluarController extends Controller
 {
@@ -74,13 +75,31 @@ class BarangKeluarController extends Controller
             return redirect()->route('barangkeluar.create')->withErrors($errors)->withInput();
         }
     
-        BarangKeluar::create([
-            'tgl_keluar' => $request->tgl_keluar,
-            'qty_keluar' => $request->qty_keluar,
-            'barang_id' => $request->barang_id,
-        ]);
+       //BarangKeluar::create([
+            //'tgl_keluar' => $request->tgl_keluar,
+            //'qty_keluar' => $request->qty_keluar,
+            //'barang_id' => $request->barang_id,
+        //]);
+
+ 	try {
+            DB::beginTransaction(); // Mulai transaksi
+
+            // Create BarangKeluar record
+            BarangKeluar::create([
+                'tgl_keluar' => $request->tgl_keluar,
+                'qty_keluar' => $request->qty_keluar,
+                'barang_id' => $request->barang_id,
+            ]);
+
+            DB::commit(); // Commit perubahan
+
+            // Redirect to index
+            return redirect()->route('barangkeluar.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback jika terjadi kesalahan
+            return redirect()->route('barangkeluar.index')->with(['error' => 'Gagal menyimpan data.']);
+        }
     
-        return redirect()->route('barangkeluar.index')->with(['success' => 'Data Berhasil Disimpan!']);
     }
 
     /**
