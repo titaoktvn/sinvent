@@ -5,66 +5,49 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-            <div class="pull-left">
+		<div class="pull-left">
 		    <h2>DAFTAR BARANG KELUAR</h2>
 		</div>
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
 
-        @if(session('success'))
+        @if(session('Success'))
             <div class="alert alert-success">
-                {{ session('success') }}
+                {{ session('Success') }}
             </div>
         @endif
 
-        @if ($error = Session::get('gagal'))
+        @if(session('Gagal'))
             <div class="alert alert-danger">
-                <p>{{ $error }}</p>
+                {{ session('Gagal') }}
             </div>
         @endif
+
         <div class="card">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div  class="flex-shrink-0">
-                        <a href="{{ route('barangkeluar.create') }}" class="btn btn-md btn-success my-2">TAMBAH BARANG KELUAR</a>
+                    <div class="card-body">
+                        <div class="row">
+                        <div class="col-md-6 bg-light text-left">
+                        <a href="{{ route('barangkeluar.create') }}" class="btn btn-md btn-success mb-3">TAMBAH BARANG KELUAR</a>
                         </div>
-                        <!-- Form pencarian -->
-                        <form  method="GET" action="{{ route('barangkeluar.index') }}" class="form-inline my-2 my-lg-0">
+                        
+                        <div class="col-md-6 bg-light text-right">
+                            <form action="/barang" method="GET"
+                            class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                            @csrf
                             <div class="input-group">
-                                <input type="text" class="form-control bg-light border-0 small" name="keyword" placeholder="Search for..."
-                                    aria-label="Search" aria-describedby="basic-addon2"  value="{{ request()->input('keyword') }}">
+                                <input type="text" name="search" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" value="{{ request('search') }}">
                                 <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit"> <!-- Perubahan di sini: menambahkan type="submit" -->
-                                        <i class="fas fa-search fa-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                        <!-- Form pencarian untuk tampilan kecil (XS) -->
-                        <form  method="GET" action="{{ route('barangkeluar.index') }}" class="d-sm-none form-inline mr-auto w-100 navbar-search">
-                            <div class="input-group">
-                                <input type="text" class="form-control bg-light border-0 small" name="keyword" placeholder="Search for..."
-                                    aria-label="Search" aria-describedby="basic-addon2" value="{{ request()->input('keyword') }}">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit"> <!-- Perubahan di sini: menambahkan type="submit" -->
+                                    <button class="btn btn-primary" type="submit">
                                         <i class="fas fa-search fa-sm"></i>
                                     </button>
                                 </div>
                             </div>
                         </form>
                     </div>
-                </div>
-
-                </div>
-
 
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>NO</th>
-                            <th>TGL KELUAR</th>
+                            <th>TANGGAL KELUAR</th>
                             <th>QTY KELUAR</th>
                             <th>BARANG</th>
                             <th style="width: 15%">AKSI</th>
@@ -73,12 +56,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($rsetBarangKeluar as $rowbarang)
+                        @forelse ($rsetBarang as $rowbarang)
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $rowbarang->tgl_keluar  }}</td>
                                 <td>{{ $rowbarang->qty_keluar  }}</td>
-                                <td>{{ $rowbarang->barang-> merk  }}</td>
+                                <td>{{ $rowbarang->barang->merk  }}</td>
                                 
                                 <td class="text-center">
                                     <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('barangkeluar.destroy', $rowbarang->id) }}" method="POST">
@@ -92,13 +75,13 @@
                             </tr>
                         @empty
                             <div class="alert">
-                                Data barang keluar belum tersedia!
+                                Data barang belum tersedia!
                             </div>
                         @endforelse
                     </tbody>
                    
                 </table>
-                {!! $rsetBarangKeluar->links('pagination::bootstrap-5') !!}
+                {!! $rsetBarang->links('pagination::bootstrap-5') !!}
 
             </div>
         </div>
