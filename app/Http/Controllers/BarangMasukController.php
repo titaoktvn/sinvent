@@ -84,32 +84,6 @@ class BarangMasukController extends Controller
         }
     }
 
-
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     //return $request;
-    //     //validate form
-    //     $request->validate( [
-    //         'tgl_masuk'          => 'required',
-    //         'qty_masuk'          => 'required',
-    //         'barang_id'          => 'required',
-
-    //     ]);
-
-    //     //create post
-    //     BarangMasuk::create([
-    //         'tgl_masuk'             => $request->tgl_masuk,
-    //         'qty_masuk'             => $request->qty_masuk,
-    //         'barang_id'             => $request->barang_id,
-    //     ]);
-
-    //     //redirect to index
-    //     return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Disimpan!']);
-    // }
-
     /**
      * Display the specified resource.
      */

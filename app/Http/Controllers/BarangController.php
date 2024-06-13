@@ -165,4 +165,98 @@ class BarangController extends Controller
         return redirect()->route('barang.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
 }
+
+    // API
+    // [invent-01] Semua Barang
+    function getAPIBarang(){
+        $barang = Barang::all();
+        $data = array("data"=>$barang);
+
+        return response()->json($data);
+    }
+
+    // [invent-02] Buat Barang Baru
+    function createAPIBarang(Request $request)
+    {
+        // Validasi data yang diterima dari request
+        $validatedData = $request->validate([
+            'merk'          => 'required|string|max:30',
+            'seri'          => 'required|string|max:40',
+            'spesifikasi'   => 'required|string',
+            // 'stok'          => 'required|integer',
+            'kategori_id'   => 'nullable|exists:kategori_id'
+        ]);
+
+        // Buat kategori baru menggunakan data yang sudah divalidasi
+        $barang = Barang::create([
+            'id' => $validatedData['id'],
+            'merk' => $validatedData['merk'],
+            'seri' => $validatedData['seri'],
+            'spesifikasi' => $validatedData['spesifikasi'],
+            // 'stok' => $validatedData['stok'],
+            'kategori_id' => $validatedData['kategori_id']
+        ]);
+
+        // Mengembalikan respons JSON dengan data barang yang baru dibuat
+        return response()->json([
+            'data' => [
+                'id' => $barang->id,
+                'merk' => $barang->merk,
+                'seri' => $barang->seri,
+                'spesifikasi' => $barang->spesifikasi,
+                // 'stok' => $barang->stok,
+                'kategori_id' => $barang->kategori_id,
+                'created_at' => $barang->created_at,
+                'updated_at' => $barang->updated_at
+            ]
+        ], 200); // Status 200 Created
+    }
+
+    // [invent-03] Salah Satu Barang
+    public function showAPIBarang($id)
+    {
+        $barang = Barang::find($id);
+        if (!$barang) {
+            return response()->json(['status' => 'Barang tidak ditemukan'], 404);
+        }
+
+
+        return response()->json(['data' => $barang], 200);
+    }
+
+    // [invent-04] Hapus Barang
+    public function deleteAPIBarang(string $id)
+    {
+        if (DB::table('barang')->where('kategori_id', $id)->exists()){
+            // Menambahkan return response dengan status 500
+            return response()->json(['error' => 'kategori tidak dapat dihapus'], 500);
+        } else {
+            $rseBarang = Barang::find($id);
+            if ($rseBarang) {
+                $rseBarang->delete();
+                return response()->json(['success' => 'Berhasil dihapus'], 200);
+            } else {
+                return response()->json(['error' => 'Barang tidak ditemukan'], 404);
+            }
+        }
+    }
+
+    // [invent-05] Update Salah Satu Barang
+    function updateAPIBarang(Request $request, string $id) {
+        $barang = Barang::find($id);
+        if (!$barang) {
+            return response()->json(['status' => 'Barang tidak ditemukan'], 404);
+        }
+
+
+        $barang->merk=$request->merk;
+        $barang->seri=$request->seri;
+        $barang->spesifikasi=$request->spesifikasi;
+        $barang->kategori_id=$request->kategori_id;
+        $barang->save();
+
+
+        return response()->json(['status' => 'Barang berhasil diubah'], 200);          
+    }
+
 }

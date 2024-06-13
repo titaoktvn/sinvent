@@ -58,7 +58,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
-                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
+                            <!-- <button type="reset" class="btn btn-md btn-warning">RESET</button> -->
                             <a href="{{ route('barangmasuk.index') }}" class="btn btn-md btn-primary">BATAL</a>
 
                         </form>
